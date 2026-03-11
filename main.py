@@ -1,10 +1,8 @@
-import base64
 from pathlib import Path
 from nicegui import ui
 import os
 
 IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg'}
-MIME = {'png': 'png', 'jpg': 'jpeg', 'jpeg': 'jpeg', 'gif': 'gif', 'webp': 'webp', 'bmp': 'bmp', 'svg': 'svg+xml'}
 
 POLL_OPTIONS = {
     '0.1s': 0.1,
@@ -14,6 +12,9 @@ POLL_OPTIONS = {
     '5s': 5.0,
     '10s': 10.0,
 }
+
+SIZE_WIDTH = 1000
+SIZE_HEIGHT = 1000
 
 
 def find_last_image(folder: str) -> str | None:
@@ -30,16 +31,10 @@ def find_last_image(folder: str) -> str | None:
 def refresh_image():
     path = find_last_image(folder_input.value)
     if path:
-        ext = Path(path).suffix.lower().lstrip('.')
-        mime = MIME.get(ext, 'jpeg')
-        data = base64.b64encode(Path(path).read_bytes()).decode()
-        img_html.content = (
-            f'<img src="data:image/{mime};base64,{data}" '
-            f'style="max-width:100%; max-height:100%; object-fit:contain; display:block;">'
-        )
+        img.set_source(path)
         status.set_text(f'Showing: {Path(path).name}')
     else:
-        img_html.content = ''
+        img.set_source('')
         status.set_text('No images found in folder.')
 
 
@@ -67,9 +62,8 @@ with ui.column().classes('w-full items-center gap-4 p-6').style('height: 100%; b
 
     status = ui.label('').classes('text-sm text-gray-500')
 
-    img_html = ui.html('').style(
-        'flex: 1; min-height: 0; width: 100%; '
-        'display: flex; align-items: center; justify-content: center; overflow: hidden;'
+    img = ui.image('').style(
+        f'width: {SIZE_WIDTH}px; height: {SIZE_HEIGHT}px; object-fit: contain;'
     )
 
 timer = ui.timer(interval=1.0, callback=refresh_image)

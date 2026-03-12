@@ -42,7 +42,7 @@ def on_poll_change(e):
     timer.interval = POLL_OPTIONS[e.value]
 
 
-ui.add_head_html('<style>html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; }</style>')
+ui.add_head_html('<style>html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; } .q-img__image { transition: none !important; }</style>')
 
 with ui.column().classes('w-full items-center gap-4 p-6').style('height: 100%; box-sizing: border-box; overflow: hidden;'):
     ui.label('Image Viewer').classes('text-2xl font-bold')

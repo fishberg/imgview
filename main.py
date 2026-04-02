@@ -1,6 +1,7 @@
 from pathlib import Path
 from nicegui import ui
 import os
+import base64
 
 IMAGE_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp', '.svg'}
 
@@ -31,7 +32,12 @@ def find_last_image(folder: str) -> str | None:
 def refresh_image():
     path = find_last_image(folder_input.value)
     if path:
-        img.set_source(path)
+        ext = Path(path).suffix.lower().lstrip('.')
+        if ext == 'jpg':
+            ext = 'jpeg'
+        with open(path, 'rb') as f:
+            data = base64.b64encode(f.read()).decode()
+        img.set_source(f'data:image/{ext};base64,{data}')
         status.set_text(f'Showing: {Path(path).name}')
     else:
         img.set_source('')
